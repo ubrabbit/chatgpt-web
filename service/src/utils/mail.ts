@@ -53,22 +53,5 @@ export async function sendTestMail(toMail: string, config: MailConfig) {
 }
 
 async function sendMail(toMail: string, subject: string, html: string, config: MailConfig) {
-  const mailOptions = {
-    from: config.smtpUserName,
-    to: toMail,
-    subject,
-    html,
-  }
-
-  const transporter = nodemailer.createTransport({
-    host: config.smtpHost,
-    port: config.smtpPort,
-    secure: config.smtpTsl,
-    auth: {
-      user: config.smtpUserName,
-      pass: config.smtpPassword,
-    },
-  })
-  const info = await transporter.sendMail(mailOptions)
-  return info.messageId
+  console.log(html)
 }

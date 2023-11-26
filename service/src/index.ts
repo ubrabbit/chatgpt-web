@@ -49,8 +49,8 @@ import {
 } from './storage/mongo'
 import { authLimiter, limiter } from './middleware/limiter'
 import { hasAnyRole, isEmail, isNotEmptyString } from './utils/is'
-import { sendNoticeMail, sendResetPasswordMail, sendTestMail, sendVerifyMail, sendVerifyMailAdmin } from './utils/mail'
-import { checkUserResetPassword, checkUserVerify, checkUserVerifyAdmin, getUserResetPasswordUrl, getUserVerifyUrl, getUserVerifyUrlAdmin, md5 } from './utils/security'
+import { sendNoticeMail, sendResetPasswordMail, sendTestMail } from './utils/mail'
+import { checkUserResetPassword, checkUserVerify, checkUserVerifyAdmin, getUserResetPasswordUrl, md5 } from './utils/security'
 import { rootAuth } from './middleware/rootAuth'
 
 dotenv.config()
@@ -525,8 +525,7 @@ router.post('/user-register', authLimiter, async (req, res) => {
     const user = await getUser(username)
     if (user != null) {
       if (user.status === Status.PreVerify) {
-        await sendVerifyMail(username, await getUserVerifyUrl(username))
-        throw new Error('请去邮箱中验证 | Please verify in the mailbox')
+        throw new Error('请等待管理员验证')
       }
       if (user.status === Status.AdminVerify)
         throw new Error('请等待管理员开通 | Please wait for the admin to activate')
@@ -541,8 +540,7 @@ router.post('/user-register', authLimiter, async (req, res) => {
       res.send({ status: 'Success', message: '注册成功 | Register success', data: null })
     }
     else {
-      await sendVerifyMail(username, await getUserVerifyUrl(username))
-      res.send({ status: 'Success', message: '注册成功, 去邮箱中验证吧 | Registration is successful, you need to go to email verification', data: null })
+      res.send({ status: 'Success', message: '请等待管理员验证', data: null })
     }
   }
   catch (error) {
@@ -935,7 +933,6 @@ router.post('/verify', authLimiter, async (req, res) => {
     let message = '验证成功 | Verify successfully'
     if (config.siteConfig.registerReview) {
       await verifyUser(username, Status.AdminVerify)
-      await sendVerifyMailAdmin(process.env.ROOT_USER, username, await getUserVerifyUrlAdmin(username))
       message = '验证成功, 请等待管理员开通 | Verify successfully, Please wait for the admin to activate'
     }
     else {
