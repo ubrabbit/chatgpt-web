@@ -27,7 +27,7 @@ export default {
     failed: '操作失败',
     register: '注册',
     login: '登录',
-    notLoggedIn: '登录 / 注册',
+    notLoggedIn: '登录',
     logOut: '退出登录',
     unauthorizedTips: '未经授权，请先进行验证。',
     email: '邮箱',

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { NButton, NInput, NModal, NTabPane, NTabs, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchLogin, fetchRegister, fetchResetPassword, fetchSendResetMail, fetchVerify, fetchVerifyAdmin } from '@/api'
+import { fetchLogin, fetchRegister, fetchVerify, fetchVerifyAdmin } from '@/api'
 import { useAuthStore } from '@/store'
 
 interface Props {
@@ -60,7 +60,7 @@ onMounted(async () => {
   sign.value = route.query.verifyresetpassword as string
   if (sign.value) {
     username.value = sign.value.split('-')[0].split('|')[0]
-    activeTab.value = 'resetPassword'
+    // activeTab.value = 'resetPassword'
     show.value = true
   }
 })
@@ -161,47 +161,6 @@ async function handleRegister() {
   }
 }
 
-async function handleSendResetMail() {
-  const name = username.value.trim()
-
-  if (!name)
-    return
-
-  try {
-    loading.value = true
-    const result = await fetchSendResetMail(name)
-    ms.success(result.message as string)
-  }
-  catch (error: any) {
-    ms.error(error.message ?? 'error')
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-async function handleResetPassword() {
-  const name = username.value.trim()
-  const pwd = password.value.trim()
-  const confirmPwd = confirmPassword.value.trim()
-
-  if (!name || !pwd || !confirmPwd || pwd !== confirmPwd) {
-    ms.error('两次输入的密码不一致 | Passwords don\'t match')
-    return
-  }
-
-  try {
-    loading.value = true
-    const result = await fetchResetPassword(name, pwd, sign.value)
-    ms.success(result.message as string)
-  }
-  catch (error: any) {
-    ms.error(error.message ?? 'error')
-  }
-  finally {
-    loading.value = false
-  }
-}
 </script>
 
 <template>
@@ -242,24 +201,6 @@ async function handleResetPassword() {
             </NButton>
           </NTabPane>
 
-          <NTabPane name="resetPassword" :tab="$t('common.resetPassword')">
-            <NInput v-model:value="username" :disabled="sign !== undefined" type="text" :placeholder="$t('common.email')" class="mb-2" />
-            <NInput v-if="!!sign" v-model:value="password" type="password" :placeholder="$t('common.password')" class="mb-2" @input="handlePasswordInput" />
-            <NInput
-              v-if="showConfirmPassword"
-              v-model:value="confirmPassword"
-              type="password"
-              :placeholder="$t('common.passwordConfirm')"
-              class="mb-4"
-              :status="confirmPasswordStatus"
-            />
-            <NButton v-if="!sign" block type="primary" :disabled="username.length <= 0" :loading="loading" @click="handleSendResetMail">
-              {{ $t('common.resetPasswordMail') }}
-            </NButton>
-            <NButton v-else block type="primary" :disabled="disabled || password !== confirmPassword" :loading="loading" @click="handleResetPassword">
-              {{ $t('common.resetPassword') }}
-            </NButton>
-          </NTabPane>
         </NTabs>
         <!-- End Tabs -->
       </div>
