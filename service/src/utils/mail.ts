@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import nodemailer from 'nodemailer'
 import type { MailConfig } from '../storage/model'
 import { getCacheConfig } from '../storage/config'
 
@@ -53,5 +52,4 @@ export async function sendTestMail(toMail: string, config: MailConfig) {
 }
 
 async function sendMail(toMail: string, subject: string, html: string, config: MailConfig) {
-  console.log(html)
 }

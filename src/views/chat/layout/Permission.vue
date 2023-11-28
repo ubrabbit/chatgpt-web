@@ -160,7 +160,6 @@ async function handleRegister() {
     loading.value = false
   }
 }
-
 </script>
 
 <template>
@@ -200,7 +199,6 @@ async function handleRegister() {
               {{ $t('common.register') }}
             </NButton>
           </NTabPane>
-
         </NTabs>
         <!-- End Tabs -->
       </div>

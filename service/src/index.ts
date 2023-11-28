@@ -524,9 +524,9 @@ router.post('/user-register', authLimiter, async (req, res) => {
 
     const user = await getUser(username)
     if (user != null) {
-      if (user.status === Status.PreVerify) {
+      if (user.status === Status.PreVerify)
         throw new Error('请等待管理员验证')
-      }
+
       if (user.status === Status.AdminVerify)
         throw new Error('请等待管理员开通 | Please wait for the admin to activate')
       res.send({ status: 'Fail', message: '账号已存在 | The email exists', data: null })
@@ -536,12 +536,11 @@ router.post('/user-register', authLimiter, async (req, res) => {
     const isRoot = username.toLowerCase() === process.env.ROOT_USER
     await createUser(username, newPassword, isRoot ? [UserRole.Admin] : [UserRole.User])
 
-    if (isRoot) {
+    if (isRoot)
       res.send({ status: 'Success', message: '注册成功 | Register success', data: null })
-    }
-    else {
+
+    else
       res.send({ status: 'Success', message: '请等待管理员验证', data: null })
-    }
   }
   catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null })
