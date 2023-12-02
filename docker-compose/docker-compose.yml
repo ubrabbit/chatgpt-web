@@ -24,8 +24,9 @@ services:
       # 开启注册之后 超级管理邮箱
       ROOT_USER: xxx@qq.com
       # 网站是否开启注册 必须开启, 否则管理员都没法注册, 可后续关闭
-      REGISTER_ENABLED: true
-      # 更多配置, 在运行后, 注册管理员, 在管理员页面中设置
+      REGISTER_ENABLED: '1'
+      # 注册需要审核
+      REGISTER_REVIEW: '1'
     links:
       - database
 
