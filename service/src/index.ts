@@ -375,6 +375,10 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
     const config = await getCacheConfig()
     const userId = req.headers.userId.toString()
     const user = await getUserById(userId)
+    if (user == null) {
+      res.send({ status: 'Fail', message: '非法用户 ｜ Invalid User', data: null })
+      return
+    }
     if (config.auditConfig.enabled || config.auditConfig.customizeEnabled) {
       if (!user.roles.includes(UserRole.Admin) && await containsSensitiveWords(config.auditConfig, prompt)) {
         res.send({ status: 'Fail', message: '含有敏感词 | Contains sensitive words', data: null })
@@ -591,6 +595,9 @@ router.post('/session', async (req, res) => {
     let userInfo: { name: string; description: string; avatar: string; userId: string; root: boolean; roles: UserRole[]; config: UserConfig }
     if (userId != null) {
       const user = await getUserById(userId)
+      if (user == null)
+        throw new Error('无效用户 | Invalid User.')
+
       userInfo = {
         name: user.name,
         description: user.description,
